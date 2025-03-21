@@ -86,10 +86,6 @@ class Preprocessor {
         for (i in result.indices) {
             result[i] = doubleResult[i].toFloat()
         }
-//        for (i in 0 until size) {
-//            print("{" + doubleResult[i] + "} ")
-//            if (i % size == 0) println()
-//        }
         return result
     }
 
@@ -118,6 +114,42 @@ class Preprocessor {
         return out
     }
 
+    fun isFoggy(pixels: Array<IntArray>) : Boolean {
+        val sobelX : FloatArray = arrayOf(
+            -1f, 0f, 1f,
+            -2f, 0f, 2f,
+            -1f, 0f, 1f
+        ).toFloatArray()
+
+        val sobelY : FloatArray = arrayOf(
+            -1f, -2f, -1f,
+            0f,  0f,  0f,
+            1f,  2f,  1f
+        ).toFloatArray()
+        val eqPixels = histogramEqualization(pixels, 224, 224);
+        val gx = convolve(eqPixels, sobelX, 3)
+        val gy = convolve(eqPixels, sobelY, 3)
+
+        val rows = pixels.size
+        val cols = pixels[0].size
+        var sumMagnitude = 0.0
+        var count = 0
+
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                val gradientX = gx[i]?.get(j)?.toDouble()
+                val gradientY = gy[i]?.get(j)?.toDouble()
+                if (gradientY == null || gradientX == null) return  false;
+                val magnitude = Math.sqrt(gradientX * gradientX + gradientY * gradientY)
+                sumMagnitude += magnitude
+                count++
+            }
+        }
+
+        val contrastScore = sumMagnitude / count
+        return contrastScore < 45.0
+    }
+
     fun  isBlurry(pixels: Array<IntArray>): Boolean {
         val threshold = 650;
         val gaussianKernel = generateGaussianKernel(3, 3/6f);
@@ -133,7 +165,6 @@ class Preprocessor {
         newPixels = convolve(newPixels.requireNoNulls(), l_kernel2, 3);
         if (newPixels == null) return false;
         val variance = calculateVariance(newPixels.requireNoNulls());
-        println(variance);
         return variance < threshold;
     }
 

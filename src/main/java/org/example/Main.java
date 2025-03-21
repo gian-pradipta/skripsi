@@ -28,24 +28,17 @@ public class Main {
         };
         try {
             BufferedImage imgToPixels = new BufferedImage(436, 618, BufferedImage.TYPE_BYTE_GRAY);
-            InputStream imageStream = Preprocessor.class.getResourceAsStream("/224_blurr_3.jpg");
+            InputStream imageStream = Preprocessor.class.getResourceAsStream("/224_normal.jpg");
             BufferedImage img = ImageIO.read(imageStream);
             int[][] pixels = p.fromImgToPixels(img);
             imgToPixels = p.fromPixelsToImg(pixels);
             img = p.fromPixelsToImg(pixels);
-            ImageIO.write(imgToPixels, "png", new File("out.jpg"));
-            if (p.isBlurry(pixels)) {
+            p.isFoggy(pixels);
+            if (p.isBlurry(pixels) || p.isFoggy(pixels)) {
                 System.out.println("Gambar Blurr");
             } else {
                 System.out.println("Gambar normal!");
             }
-
-//
-//            ConvolveOp op = new ConvolveOp(new Kernel(3, 3, l_kernel2), ConvolveOp.EDGE_NO_OP, null);
-//            imgToPixels = op.filter(img, imgToPixels);
-//            pixels = p.fromImgToPixels(imgToPixels);
-//            double variance = p.calculateVariance(pixels);
-//            System.out.println(variance);
         } catch (Exception e) {
             e.printStackTrace();
         }
