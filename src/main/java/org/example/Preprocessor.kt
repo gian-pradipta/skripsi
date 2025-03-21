@@ -1,6 +1,8 @@
 package org.example
 
 import java.awt.image.BufferedImage
+import java.awt.image.ConvolveOp
+import java.awt.image.Kernel
 import java.util.*
 
 class Preprocessor {
@@ -84,10 +86,10 @@ class Preprocessor {
         for (i in result.indices) {
             result[i] = doubleResult[i].toFloat()
         }
-        for (i in 0 until size) {
-            print("{" + doubleResult[i] + "} ")
-            if (i % size == 0) println()
-        }
+//        for (i in 0 until size) {
+//            print("{" + doubleResult[i] + "} ")
+//            if (i % size == 0) println()
+//        }
         return result
     }
 
@@ -114,6 +116,25 @@ class Preprocessor {
             }
         }
         return out
+    }
+
+    fun  isBlurry(pixels: Array<IntArray>): Boolean {
+        val threshold = 650;
+        val gaussianKernel = generateGaussianKernel(3, 3/6f);
+        val l_kernel2 : FloatArray = arrayOf(
+                    1f, 1f, 1f,
+                    1f, -8f, 1f,
+                    1f, 1f, 1f
+        ).toFloatArray();
+        var newPixels : Array<IntArray?>;
+        val eqPixels = histogramEqualization(pixels, 224, 224);
+        newPixels = convolve(eqPixels, gaussianKernel, 3);
+        if (newPixels == null) return false;
+        newPixels = convolve(newPixels.requireNoNulls(), l_kernel2, 3);
+        if (newPixels == null) return false;
+        val variance = calculateVariance(newPixels.requireNoNulls());
+        println(variance);
+        return variance < threshold;
     }
 
     fun fromImgToPixels(img: BufferedImage): Array<IntArray> {
