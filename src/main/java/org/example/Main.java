@@ -33,10 +33,11 @@ public class Main {
             int[][] pixels = p.fromImgToPixels(img);
             imgToPixels = p.fromPixelsToImg(pixels);
             img = p.fromPixelsToImg(pixels);
-            p.isFoggy(pixels);
             if (p.isFoggy(pixels)) System.out.println("Gambar Berkabut!");
             if (p.isBlurry(pixels)) System.out.println("Gambar Blurr!");
 
+            System.out.printf("kk");
+            ImageIO.write(imgToPixels, "jpg" ,new File("out2.jpg"));
 
         } catch (Exception e) {
             e.printStackTrace();

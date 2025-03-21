@@ -147,7 +147,8 @@ class Preprocessor {
         }
 
         val contrastScore = sumMagnitude / count
-        return contrastScore < 40.0
+        println(contrastScore);
+        return contrastScore < 35.0
     }
 
     fun  isBlurry(pixels: Array<IntArray>): Boolean {
@@ -159,12 +160,14 @@ class Preprocessor {
                     1f, 1f, 1f
         ).toFloatArray();
         var newPixels : Array<IntArray?>;
-//        val eqPixels = histogramEqualization(pixels, 224, 224);
-        newPixels = convolve(pixels, gaussianKernel, 3);
+        val eqPixels = histogramEqualization(pixels, 224, 224);
+        newPixels = convolve(eqPixels, gaussianKernel, 3);
         if (newPixels == null) return false;
+
         newPixels = convolve(newPixels.requireNoNulls(), l_kernel2, 3);
         if (newPixels == null) return false;
         val variance = calculateVariance(newPixels.requireNoNulls());
+        println(variance);
         return variance < threshold;
     }
 
