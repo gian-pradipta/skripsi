@@ -1,8 +1,6 @@
 package org.example
 
 import java.awt.image.BufferedImage
-import java.awt.image.ConvolveOp
-import java.awt.image.Kernel
 import java.util.*
 
 class Preprocessor {
@@ -14,7 +12,7 @@ class Preprocessor {
         return 1 / (2 * Math.PI * sigma * sigma) * Math.exp(exponent)
     }
 
-    fun calculateVariance(image: Array<IntArray>): Double {
+    private fun calculateVariance(image: Array<IntArray>): Double {
         val rows = image.size
         val cols = image[0].size
         var sum: Long = 0
@@ -126,7 +124,9 @@ class Preprocessor {
             0f,  0f,  0f,
             1f,  2f,  1f
         ).toFloatArray()
-        val eqPixels = histogramEqualization(pixels, 224, 224);
+        val blurredPixels = convolve(pixels, generateGaussianKernel(3, 3/6f), 3);
+        val eqPixels = histogramEqualization(blurredPixels.requireNoNulls(), 224, 224);
+
         val gx = convolve(eqPixels, sobelX, 3)
         val gy = convolve(eqPixels, sobelY, 3)
 
@@ -147,11 +147,11 @@ class Preprocessor {
         }
 
         val contrastScore = sumMagnitude / count
-        return contrastScore < 45.0
+        return contrastScore < 40.0
     }
 
     fun  isBlurry(pixels: Array<IntArray>): Boolean {
-        val threshold = 650;
+        val threshold = 550;
         val gaussianKernel = generateGaussianKernel(3, 3/6f);
         val l_kernel2 : FloatArray = arrayOf(
                     1f, 1f, 1f,
@@ -159,8 +159,8 @@ class Preprocessor {
                     1f, 1f, 1f
         ).toFloatArray();
         var newPixels : Array<IntArray?>;
-        val eqPixels = histogramEqualization(pixels, 224, 224);
-        newPixels = convolve(eqPixels, gaussianKernel, 3);
+//        val eqPixels = histogramEqualization(pixels, 224, 224);
+        newPixels = convolve(pixels, gaussianKernel, 3);
         if (newPixels == null) return false;
         newPixels = convolve(newPixels.requireNoNulls(), l_kernel2, 3);
         if (newPixels == null) return false;

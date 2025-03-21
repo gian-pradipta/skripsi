@@ -28,17 +28,16 @@ public class Main {
         };
         try {
             BufferedImage imgToPixels = new BufferedImage(436, 618, BufferedImage.TYPE_BYTE_GRAY);
-            InputStream imageStream = Preprocessor.class.getResourceAsStream("/224_normal.jpg");
+            InputStream imageStream = Preprocessor.class.getResourceAsStream("/224_blurr_3.jpg");
             BufferedImage img = ImageIO.read(imageStream);
             int[][] pixels = p.fromImgToPixels(img);
             imgToPixels = p.fromPixelsToImg(pixels);
             img = p.fromPixelsToImg(pixels);
             p.isFoggy(pixels);
-            if (p.isBlurry(pixels) || p.isFoggy(pixels)) {
-                System.out.println("Gambar Blurr");
-            } else {
-                System.out.println("Gambar normal!");
-            }
+            if (p.isFoggy(pixels)) System.out.println("Gambar Berkabut!");
+            if (p.isBlurry(pixels)) System.out.println("Gambar Blurr!");
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
