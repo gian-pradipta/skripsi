@@ -28,16 +28,19 @@ public class Main {
         };
         try {
             BufferedImage imgToPixels = new BufferedImage(436, 618, BufferedImage.TYPE_BYTE_GRAY);
-            InputStream imageStream = Preprocessor.class.getResourceAsStream("/224_blurr_3.jpg");
+            InputStream imageStream = Preprocessor.class.getResourceAsStream("/brightened_image.jpg");
             BufferedImage img = ImageIO.read(imageStream);
             int[][] pixels = p.fromImgToPixels(img);
-            imgToPixels = p.fromPixelsToImg(pixels);
-            img = p.fromPixelsToImg(pixels);
+
+//            pixels = p.convolve(pixels, p.generateGaussianKernel(3, 3/6f), 3);
+
             if (p.isFoggy(pixels)) System.out.println("Gambar Berkabut!");
             if (p.isBlurry(pixels)) System.out.println("Gambar Blurr!");
 
+            pixels = p.medianFilter(pixels, 5);
+            imgToPixels = p.fromPixelsToImg(pixels);
             System.out.printf("kk");
-            ImageIO.write(imgToPixels, "jpg" ,new File("out2.jpg"));
+            ImageIO.write(imgToPixels, "jpg" ,new File("out23.jpg"));
 
         } catch (Exception e) {
             e.printStackTrace();

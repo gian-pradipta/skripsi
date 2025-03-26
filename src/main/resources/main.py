@@ -19,10 +19,26 @@ import numpy as np
 
 # cv2.imwrite("224_blurr_3.jpg", imfilt)
 
-img = cv2.imread("224_normal_cahaya.jpg")
+# img = cv2.imread("224_normal_cahaya.jpg")
 
 # img = cv2.GaussianBlur(img, (3, 3), 3/6)
-img = cv2.medianBlur(img, 3)
+# img = cv2.medianBlur(img, 3)
 
-img = cv2.Laplacian(img, cv2.CV_64F)
-print(img.var())
+# img = cv2.Laplacian(img, cv2.CV_64F)
+# print(img.var())
+
+import cv2
+
+# Load the image
+ori = cv2.imread('224_normal_cahaya.jpg')
+
+# Increase brightness by adding a constant value
+# brightened_image = cv2.convertScaleAbs(image, alpha=2, beta=50)  # Adjust beta for brightness
+img = cv2.medianBlur(ori, 3)
+
+# Save or display the brightened image
+cv2.imwrite('brightened_image.jpg', img)
+cv2.imshow('Brightened Image', img)
+cv2.imshow('Ori', ori)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

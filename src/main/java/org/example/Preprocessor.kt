@@ -112,6 +112,31 @@ class Preprocessor {
         return out
     }
 
+    fun medianFilter(pixels: Array<IntArray>, ksize: Int) : Array<IntArray>{
+        val width = pixels.size
+        val height = pixels[0].size
+        val out = arrayOfNulls<IntArray>(pixels.size)
+        for (i in pixels.indices) {
+            out[i] = Arrays.copyOf(pixels[i], pixels[i].size)
+        }
+        val kernel = FloatArray(ksize * ksize)
+        val half_k = ksize / 2
+        for (i in half_k until width - half_k) {
+            for (j in half_k until height - half_k) {
+                for (ki in kernel.indices) {
+                    val kx = ki % ksize
+                    val ky = ki / ksize
+                    val offset_x = kx - half_k
+                    val offset_y = ky - half_k
+                    kernel[ki] =  pixels[i + offset_y][j + offset_x].toFloat()
+                }
+                kernel.sort()
+                out[i]!![j] = kernel[ksize*ksize / 2].toInt();
+            }
+        }
+        return out.requireNoNulls();
+    }
+
     fun isFoggy(pixels: Array<IntArray>) : Boolean {
         val sobelX : FloatArray = arrayOf(
             -1f, 0f, 1f,
